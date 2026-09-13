@@ -8,15 +8,8 @@ import { PasswordService } from '../common/password/password.service.js';
 import { RegisterDTO } from './dto/register.dto.js';
 import { LoginDTO } from './dto/login.dto.js';
 import { JwtService } from '@nestjs/jwt';
-
-type JwtPayload = {
-  sub: number;
-};
-
-type LoginResponse = {
-  accessToken: string;
-  email: string;
-};
+import type { JwtPayload } from './types/jwt-payload.type.js';
+import type { LoginResponse } from './types/jwt-payload.type.js';
 
 @Injectable()
 export class AuthService {
@@ -76,6 +69,7 @@ export class AuthService {
 
     const payload: JwtPayload = {
       sub: user.id,
+      email: user.email,
     };
 
     const accessToken = this.jwtService.sign(payload);
