@@ -16,3 +16,11 @@ export const TaskStatus = {
 } as const
 
 export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
+
+
+export const RoleName = {
+  ADMIN: 'ADMIN',
+  USER: 'USER'
+} as const
+
+export type RoleName = (typeof RoleName)[keyof typeof RoleName]
