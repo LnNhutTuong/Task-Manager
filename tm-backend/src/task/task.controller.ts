@@ -14,7 +14,7 @@ import { UpdateTaskDto } from './dto/update-task.dto.js';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import type { AuthUser } from '../auth/types/jwt-payload.type.js';
-import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
+import { CurrentUser } from '../auth/decorations/current-user.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('task')
@@ -46,8 +46,7 @@ export class TaskController {
 
   @Post(`create`)
   async createTask(@Body() dto: CreateTaskDto, @CurrentUser() user: AuthUser) {
-    let userId = user?.id;
-    let task = await this.taskService.createTask(dto, userId);
+    let task = await this.taskService.createTask(dto, user);
     return {
       message: 'Create new task successfully',
       data: task,
