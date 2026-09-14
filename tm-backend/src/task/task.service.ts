@@ -4,33 +4,34 @@ import { CreateTaskDto } from './dto/create-task.dto.js';
 import { UpdateTaskDto } from './dto/update-task.dto.js';
 import { RoleName } from '../generated/prisma/enums.js';
 import { AuthUser } from '../auth/types/jwt-payload.type.js';
-import { TaskFilterDTO } from './dto/task-filter.dto.js';
-import { TaskStatus } from '../generated/prisma/enums.js';
-import { PriorityLevel } from '../generated/prisma/enums.js';
 import { Prisma } from '../generated/prisma/client.js';
+import { TaskQueryDTO } from './dto/task-query.dto.js';
 
 @Injectable()
 export class TaskService {
   constructor(private prisma: PrismaService) {}
 
-  findAll(user: AuthUser, filter: TaskFilterDTO) {
+  findAll(user: AuthUser, query: TaskQueryDTO) {
     const where: Prisma.TaskWhereInput = {};
+
+    const skip = (query.page - 1) * query.limit;
+    const take = query.limit;
 
     if (user.role === RoleName.USER) {
       where.userId = user.id;
     }
 
-    if (filter.status) {
-      where.status = filter.status;
+    if (query.status) {
+      where.status = query.status;
     }
 
-    if (filter.priority) {
-      where.priority = filter.priority;
+    if (query.priority) {
+      where.priority = query.priority;
     }
 
-    if (filter.deadline) {
-      const start = new Date(filter.deadline);
-      const nextDay = new Date(filter.deadline);
+    if (query.deadline) {
+      const start = new Date(query.deadline);
+      const nextDay = new Date(query.deadline);
 
       start.setHours(0, 0, 0, 0);
 
@@ -43,14 +44,17 @@ export class TaskService {
       };
     }
 
-    if (filter.search) {
+    if (query.search) {
       where.title = {
-        contains: filter.search,
+        contains: query.search,
         mode: 'insensitive',
       };
     }
 
-    return this.prisma.task.findMany({ where });
+    console.log('>>>>>>>>>>check skip: ', skip);
+    console.log('>>>>>>>>>>check take: ', take);
+
+    return this.prisma.task.findMany({ where, skip, take });
   }
 
   async findOne(id: number, user: AuthUser) {
