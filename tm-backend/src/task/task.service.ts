@@ -4,27 +4,57 @@ import { CreateTaskDto } from './dto/create-task.dto.js';
 import { UpdateTaskDto } from './dto/update-task.dto.js';
 import { RoleName } from '../generated/prisma/enums.js';
 import { AuthUser } from '../auth/types/jwt-payload.type.js';
-
-type TaskWhere = {
-  userId?: number;
-};
+import { TaskFilterDTO } from './dto/task-filter.dto.js';
+import { TaskStatus } from '../generated/prisma/enums.js';
+import { PriorityLevel } from '../generated/prisma/enums.js';
+import { Prisma } from '../generated/prisma/client.js';
 
 @Injectable()
 export class TaskService {
   constructor(private prisma: PrismaService) {}
 
-  findAll(user: AuthUser) {
-    const where: TaskWhere = {};
+  findAll(user: AuthUser, filter: TaskFilterDTO) {
+    const where: Prisma.TaskWhereInput = {};
 
     if (user.role === RoleName.USER) {
       where.userId = user.id;
+    }
+
+    if (filter.status) {
+      where.status = filter.status;
+    }
+
+    if (filter.priority) {
+      where.priority = filter.priority;
+    }
+
+    if (filter.deadline) {
+      const start = new Date(filter.deadline);
+      const nextDay = new Date(filter.deadline);
+
+      start.setHours(0, 0, 0, 0);
+
+      nextDay.setDate(nextDay.getDate() + 1);
+      nextDay.setHours(0, 0, 0, 0);
+
+      where.deadline = {
+        gte: start,
+        lt: nextDay,
+      };
+    }
+
+    if (filter.search) {
+      where.title = {
+        contains: filter.search,
+        mode: 'insensitive',
+      };
     }
 
     return this.prisma.task.findMany({ where });
   }
 
   async findOne(id: number, user: AuthUser) {
-    const where: TaskWhere = {};
+    const where: Prisma.TaskWhereInput = {};
 
     if (user.role === RoleName.USER) {
       where.userId = user.id;
@@ -58,7 +88,7 @@ export class TaskService {
   }
 
   async updateTask(id: number, dto: UpdateTaskDto, user: AuthUser) {
-    const where: TaskWhere = {};
+    const where: Prisma.TaskWhereInput = {};
 
     if (user.role === RoleName.USER) {
       where.userId = user.id;
@@ -86,7 +116,7 @@ export class TaskService {
   }
 
   async deleteTask(id: number, user: AuthUser) {
-    const where: TaskWhere = {};
+    const where: Prisma.TaskWhereInput = {};
 
     if (user.role === RoleName.USER) {
       where.userId = user.id;
