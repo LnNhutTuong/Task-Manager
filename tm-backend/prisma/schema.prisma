@@ -18,6 +18,12 @@ enum RoleName{
   USER
 }
 
+enum PriorityLevel{
+  LOW
+  MEDIUM
+  HIGH
+}
+
 model User {
   id Int @id @default(autoincrement())
   email String @unique
@@ -37,6 +43,7 @@ model Task {
   description String?
   status      TaskStatus @default(TODO)
   deadline    DateTime?
+  priority    PriorityLevel @default(MSEDIUM)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 

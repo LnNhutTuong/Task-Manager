@@ -51,6 +51,7 @@ export class TaskService {
         description: dto.description,
         status: dto.status,
         deadline: dto.deadline,
+        priority: dto.priority,
         userId: user.id,
       },
     });

@@ -24,3 +24,12 @@ export const RoleName = {
 } as const
 
 export type RoleName = (typeof RoleName)[keyof typeof RoleName]
+
+
+export const PriorityLevel = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH'
+} as const
+
+export type PriorityLevel = (typeof PriorityLevel)[keyof typeof PriorityLevel]
