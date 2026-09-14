@@ -2,24 +2,38 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { UpdateTaskDto } from './dto/update-task.dto.js';
+import { RoleName } from '../generated/prisma/enums.js';
+import { AuthUser } from '../auth/types/jwt-payload.type.js';
+
+type TaskWhere = {
+  userId?: number;
+};
 
 @Injectable()
 export class TaskService {
   constructor(private prisma: PrismaService) {}
 
-  findAll(userId: number) {
-    return this.prisma.task.findMany({
-      where: {
-        userId,
-      },
-    });
+  findAll(user: AuthUser) {
+    const where: TaskWhere = {};
+
+    if (user.role === RoleName.USER) {
+      where.userId = user.id;
+    }
+
+    return this.prisma.task.findMany({ where });
   }
 
-  async findOne(id: number, userId: number) {
-    const task = await this.prisma.task.findUnique({
+  async findOne(id: number, user: AuthUser) {
+    const where: TaskWhere = {};
+
+    if (user.role === RoleName.USER) {
+      where.userId = user.id;
+    }
+
+    const task = await this.prisma.task.findFirst({
       where: {
         id,
-        userId,
+        ...where,
       },
     });
 
@@ -41,11 +55,17 @@ export class TaskService {
     });
   }
 
-  async updateTask(id: number, dto: UpdateTaskDto, userId: number) {
-    const task = await this.prisma.task.findUnique({
+  async updateTask(id: number, dto: UpdateTaskDto, user: AuthUser) {
+    const where: TaskWhere = {};
+
+    if (user.role === RoleName.USER) {
+      where.userId = user.id;
+    }
+
+    const task = await this.prisma.task.findFirst({
       where: {
         id,
-        userId,
+        ...where,
       },
     });
 
@@ -56,7 +76,7 @@ export class TaskService {
     return this.prisma.task.update({
       where: {
         id,
-        userId,
+        ...where,
       },
       data: {
         ...dto,
@@ -64,11 +84,17 @@ export class TaskService {
     });
   }
 
-  async deleteTask(id: number, userId: number) {
-    const task = await this.prisma.task.findUnique({
+  async deleteTask(id: number, user: AuthUser) {
+    const where: TaskWhere = {};
+
+    if (user.role === RoleName.USER) {
+      where.userId = user.id;
+    }
+
+    const task = await this.prisma.task.findFirst({
       where: {
         id,
-        userId,
+        ...where,
       },
     });
 
@@ -79,7 +105,7 @@ export class TaskService {
     return this.prisma.task.delete({
       where: {
         id,
-        userId,
+        ...where,
       },
     });
   }

@@ -23,9 +23,7 @@ export class TaskController {
 
   @Get('all')
   async getAllTasks(@CurrentUser() user: AuthUser) {
-    let userId = user?.id;
-
-    let tasks = await this.taskService.findAll(userId);
+    let tasks = await this.taskService.findAll(user);
 
     return {
       message: 'Get all tasks successfully',
@@ -38,8 +36,7 @@ export class TaskController {
     @Param(`id`, ParseIntPipe) id: number,
     @CurrentUser() user: AuthUser,
   ) {
-    let userId = user?.id;
-    let task = await this.taskService.findOne(id, userId);
+    let task = await this.taskService.findOne(id, user);
 
     return {
       message: 'Get task with id successfully',
@@ -63,8 +60,7 @@ export class TaskController {
     @Body() dto: UpdateTaskDto,
     @CurrentUser() user: AuthUser,
   ) {
-    let userId = user?.id;
-    let task = await this.taskService.updateTask(id, dto, userId);
+    let task = await this.taskService.updateTask(id, dto, user);
 
     return {
       message: 'Update task successfully',
@@ -77,8 +73,7 @@ export class TaskController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: AuthUser,
   ) {
-    let userId = user?.id;
-    await this.taskService.deleteTask(id, userId);
+    await this.taskService.deleteTask(id, user);
 
     return {
       message: 'Delete task successfully',
