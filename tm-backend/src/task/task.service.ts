@@ -11,7 +11,7 @@ import { TaskQueryDTO } from './dto/task-query.dto.js';
 export class TaskService {
   constructor(private prisma: PrismaService) {}
 
-  findAll(user: AuthUser, query: TaskQueryDTO) {
+  async findAll(user: AuthUser, query: TaskQueryDTO) {
     const where: Prisma.TaskWhereInput = {};
 
     const skip = (query.page - 1) * query.limit;
@@ -51,10 +51,18 @@ export class TaskService {
       };
     }
 
-    console.log('>>>>>>>>>>check skip: ', skip);
-    console.log('>>>>>>>>>>check take: ', take);
+    const [tasks, totalTask] = await Promise.all([
+      this.prisma.task.findMany({ where, skip, take }),
+      this.prisma.task.count({ where }),
+    ]);
 
-    return this.prisma.task.findMany({ where, skip, take });
+    const totalPage = Math.ceil(totalTask / query.limit);
+    return {
+      tasks,
+      totalPage,
+      totalTask,
+      page: query.page,
+    };
   }
 
   async findOne(id: number, user: AuthUser) {
