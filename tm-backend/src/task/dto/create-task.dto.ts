@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { TaskStatus } from '../../generated/prisma/enums.js';
+import { PriorityLevel } from '../../generated/prisma/enums.js';
 
 export class CreateTaskDto {
   @IsString()
@@ -28,4 +29,8 @@ export class CreateTaskDto {
   @IsDate()
   @Transform(({ value }) => new Date(value))
   deadline?: Date;
+
+  @IsOptional()
+  @IsEnum(PriorityLevel)
+  priority: PriorityLevel;
 }
