@@ -7,14 +7,14 @@ import {
   Body,
   Patch,
   Delete,
-  Req,
 } from '@nestjs/common';
 import { TaskService } from './task.service.js';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { UpdateTaskDto } from './dto/update-task.dto.js';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
-import type { Request } from 'express';
+import type { AuthUser } from '../auth/types/jwt-payload.type.js';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('task')
@@ -22,8 +22,10 @@ export class TaskController {
   constructor(private taskService: TaskService) {}
 
   @Get('all')
-  async getAllTasks() {
-    let tasks = await this.taskService.findAll();
+  async getAllTasks(@CurrentUser() user: AuthUser) {
+    let userId = user?.id;
+
+    let tasks = await this.taskService.findAll(userId);
 
     return {
       message: 'Get all tasks successfully',
@@ -32,8 +34,12 @@ export class TaskController {
   }
 
   @Get(`:id`)
-  async findOne(@Param(`id`, ParseIntPipe) id: number) {
-    let task = await this.taskService.findOne(id);
+  async findOne(
+    @Param(`id`, ParseIntPipe) id: number,
+    @CurrentUser() user: AuthUser,
+  ) {
+    let userId = user?.id;
+    let task = await this.taskService.findOne(id, userId);
 
     return {
       message: 'Get task with id successfully',
@@ -42,9 +48,9 @@ export class TaskController {
   }
 
   @Post(`create`)
-  async createTask(@Body() dto: CreateTaskDto) {
-    let task = await this.taskService.createTask(dto);
-
+  async createTask(@Body() dto: CreateTaskDto, @CurrentUser() user: AuthUser) {
+    let userId = user?.id;
+    let task = await this.taskService.createTask(dto, userId);
     return {
       message: 'Create new task successfully',
       data: task,
@@ -55,8 +61,10 @@ export class TaskController {
   async updateTask(
     @Param(`id`, ParseIntPipe) id: number,
     @Body() dto: UpdateTaskDto,
+    @CurrentUser() user: AuthUser,
   ) {
-    let task = await this.taskService.updateTask(id, dto);
+    let userId = user?.id;
+    let task = await this.taskService.updateTask(id, dto, userId);
 
     return {
       message: 'Update task successfully',
@@ -65,8 +73,12 @@ export class TaskController {
   }
 
   @Delete(':id')
-  async deleteTask(@Param('id', ParseIntPipe) id: number) {
-    await this.taskService.deleteTask(id);
+  async deleteTask(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: AuthUser,
+  ) {
+    let userId = user?.id;
+    await this.taskService.deleteTask(id, userId);
 
     return {
       message: 'Delete task successfully',
