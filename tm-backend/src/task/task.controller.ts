@@ -16,7 +16,7 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import type { AuthUser } from '../auth/types/jwt-payload.type.js';
 import { CurrentUser } from '../auth/decorations/current-user.decorator.js';
-import { TaskFilterDTO } from './dto/task-filter.dto.js';
+import { TaskQueryDTO } from './dto/task-query.dto.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('task')
@@ -26,9 +26,9 @@ export class TaskController {
   @Get('all')
   async getAllTasks(
     @CurrentUser() user: AuthUser,
-    @Query() filter: TaskFilterDTO,
+    @Query() query: TaskQueryDTO,
   ) {
-    let tasks = await this.taskService.findAll(user, filter);
+    let tasks = await this.taskService.findAll(user, query);
 
     return {
       message: 'Get all tasks successfully',
