@@ -5,6 +5,7 @@ import { RoleName } from '../../generated/prisma/enums.js';
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
+
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.get<RoleName[]>(
       'roles',

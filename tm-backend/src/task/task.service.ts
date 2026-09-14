@@ -44,13 +44,14 @@ export class TaskService {
     return task;
   }
 
-  createTask(dto: CreateTaskDto, userId: number) {
+  createTask(dto: CreateTaskDto, user: AuthUser) {
     return this.prisma.task.create({
       data: {
         title: dto.title,
         description: dto.description,
         status: dto.status,
-        userId,
+        deadline: dto.deadline,
+        userId: user.id,
       },
     });
   }
@@ -76,7 +77,6 @@ export class TaskService {
     return this.prisma.task.update({
       where: {
         id,
-        ...where,
       },
       data: {
         ...dto,
@@ -105,7 +105,6 @@ export class TaskService {
     return this.prisma.task.delete({
       where: {
         id,
-        ...where,
       },
     });
   }
