@@ -73,7 +73,6 @@ export class AuthService {
     };
 
     const accessToken = this.jwtService.sign(payload);
-
     return {
       accessToken,
       email: dto.email,

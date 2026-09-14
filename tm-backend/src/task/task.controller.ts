@@ -7,16 +7,22 @@ import {
   Body,
   Patch,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { TaskService } from './task.service.js';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { UpdateTaskDto } from './dto/update-task.dto.js';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import type { Request } from 'express';
+
+@UseGuards(JwtAuthGuard)
 @Controller('task')
 export class TaskController {
   constructor(private taskService: TaskService) {}
 
   @Get('all')
-  async findAll() {
+  async getAllTasks() {
     let tasks = await this.taskService.findAll();
 
     return {
