@@ -12,10 +12,8 @@ export class TaskService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(user: AuthUser, query: TaskQueryDTO) {
+    // where
     const where: Prisma.TaskWhereInput = {};
-
-    const skip = (query.page - 1) * query.limit;
-    const take = query.limit;
 
     if (user.role === RoleName.USER) {
       where.userId = user.id;
@@ -51,8 +49,26 @@ export class TaskService {
       };
     }
 
+    // paginate
+    const skip = (query.page - 1) * query.limit;
+    const take = query.limit;
+
+    // sort
+    let sort: object;
+
+    if (query.sortBy === 'deadline') {
+      sort = {
+        deadline: {
+          sort: query.sortOrder,
+          nulls: 'last',
+        },
+      };
+    } else {
+      sort = { [query.sortBy]: query.sortOrder };
+    }
+
     const [tasks, totalTask] = await Promise.all([
-      this.prisma.task.findMany({ where, skip, take }),
+      this.prisma.task.findMany({ where, skip, take, orderBy: sort }),
       this.prisma.task.count({ where }),
     ]);
 
