@@ -1,4 +1,4 @@
-name: TaskManager CI
+name: TaskMenT CI
 
 on:
   pull_request:
