@@ -43,7 +43,7 @@ model Task {
   description String?
   status      TaskStatus @default(TODO)
   deadline    DateTime?
-  priority    PriorityLevel @default(MSEDIUM)
+  priority    PriorityLevel @default(MEDIUM)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
