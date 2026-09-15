@@ -1,4 +1,4 @@
-name: SuperTaskManager CI
+name: TaskManager CI
 
 on:
   pull_request:
