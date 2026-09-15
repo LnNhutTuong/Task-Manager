@@ -1,12 +1,18 @@
+"use client";
+
+import { apiFetch } from "@/lib/api";
 import Counter from "../components/Counter";
+import type { TestResponse } from "../types/api";
+export default async function TaskPage() {
+  const response = await apiFetch<TestResponse>(
+    "http://localhost:2202/task/all",
+  );
 
-const respone = await fetch("http://localhost:2202/");
-const data = await respone.text();
-
-export default function TaskPage() {
   return (
     <>
-      <h1>{data}</h1>
+      <h1>{response.message}</h1>
+      <p>{response.number}</p>
+
       <Counter />
     </>
   );
