@@ -34,8 +34,12 @@ describe('TaskController', () => {
       status: TaskStatus.TODO,
       priority: PriorityLevel.MEDIUM,
     };
-    const user = { id: 1, email: 'user@example.com', role: RoleName.USER };
-    const createdTask = { id: 1, ...dto, userId: user.id };
+    const user = {
+      id: 'user-id',
+      email: 'user@example.com',
+      role: RoleName.USER,
+    };
+    const createdTask = { id: 'task-id', ...dto, userId: user.id };
     taskService.createTask.mockResolvedValue(createdTask);
 
     await expect(controller.createTask(dto, user)).resolves.toEqual({

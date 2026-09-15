@@ -81,7 +81,7 @@ export class TaskService {
     };
   }
 
-  async findOne(id: number, user: AuthUser) {
+  async findOne(id: string, user: AuthUser) {
     const where: Prisma.TaskWhereInput = {};
 
     if (user.role === RoleName.USER) {
@@ -115,7 +115,7 @@ export class TaskService {
     });
   }
 
-  async updateTask(id: number, dto: UpdateTaskDto, user: AuthUser) {
+  async updateTask(id: string, dto: UpdateTaskDto, user: AuthUser) {
     const where: Prisma.TaskWhereInput = {};
 
     if (user.role === RoleName.USER) {
@@ -143,7 +143,7 @@ export class TaskService {
     });
   }
 
-  async deleteTask(id: number, user: AuthUser) {
+  async deleteTask(id: string, user: AuthUser) {
     const where: Prisma.TaskWhereInput = {};
 
     if (user.role === RoleName.USER) {

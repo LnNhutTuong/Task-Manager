@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class TaskItemResponseDto {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
   title: string;
@@ -30,7 +30,7 @@ export class TaskItemResponseDto {
   priority: PriorityLevel;
 
   @ApiProperty()
-  userId: number;
+  userId: string;
 
   @ApiProperty()
   createdAt: Date;
@@ -86,7 +86,7 @@ export class DeleteTaskResponseDto {
   message: string;
 
   @ApiProperty({
-    example: 1,
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  data: number;
+  data: string;
 }
