@@ -1,12 +1,12 @@
 import { IsEnum } from 'class-validator';
-enum SortField {
+export enum SortField {
   CREATED_AT = 'createdAt',
   DEADLINE = 'deadline',
   PRIORITY = 'priority',
   TITLE = 'title',
 }
 
-enum SortOrder {
+export enum SortOrder {
   ASC = 'asc',
   DESC = 'desc',
 }
