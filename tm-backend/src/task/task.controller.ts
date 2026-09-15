@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Body,
   Patch,
@@ -132,8 +131,8 @@ export class TaskController {
   @ApiParam({
     name: 'id',
     description: 'Task ID',
-    type: Number,
-    example: 1,
+    type: String,
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @ApiOperation({
     summary: 'Get task with id',
@@ -146,10 +145,7 @@ export class TaskController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Task not found' })
-  async findOne(
-    @Param(`id`, ParseIntPipe) id: number,
-    @CurrentUser() user: AuthUser,
-  ) {
+  async findOne(@Param(`id`) id: string, @CurrentUser() user: AuthUser) {
     let task = await this.taskService.findOne(id, user);
 
     return {
@@ -183,8 +179,8 @@ export class TaskController {
   @ApiParam({
     name: 'id',
     description: 'Task ID',
-    type: Number,
-    example: 1,
+    type: String,
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @ApiBody({ type: UpdateTaskDto })
   @ApiOperation({
@@ -200,7 +196,7 @@ export class TaskController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Task not found' })
   async updateTask(
-    @Param(`id`, ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() dto: UpdateTaskDto,
     @CurrentUser() user: AuthUser,
   ) {
@@ -216,8 +212,8 @@ export class TaskController {
   @ApiParam({
     name: 'id',
     description: 'Task ID',
-    type: Number,
-    example: 1,
+    type: String,
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @ApiOperation({
     summary: 'Delete task',
@@ -230,10 +226,7 @@ export class TaskController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Task not found' })
-  async deleteTask(
-    @Param('id', ParseIntPipe) id: number,
-    @CurrentUser() user: AuthUser,
-  ) {
+  async deleteTask(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     await this.taskService.deleteTask(id, user);
 
     return {

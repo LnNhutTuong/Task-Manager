@@ -34,14 +34,14 @@ describe('UserService', () => {
     };
     passwordService.hashPassword.mockResolvedValue('hashed-password');
     prisma.user.create.mockResolvedValue({
-      id: 1,
+      id: 'user-id',
       email: dto.email,
       password: 'hashed-password',
       name: dto.name,
     });
 
     await expect(service.createUser(dto)).resolves.toMatchObject({
-      id: 1,
+      id: 'user-id',
       email: dto.email,
     });
     expect(passwordService.hashPassword).toHaveBeenCalledWith(dto.password);
